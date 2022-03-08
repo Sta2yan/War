@@ -35,38 +35,25 @@ namespace War
                 Console.ReadKey(true);
                 Console.Clear();
 
-                StartFight();
-
-                if (_firstPlatoon.CheckBrokenPlatoon() == true)
-                {
-                    Console.WriteLine("Победа за вторым взводом!");
-                    _secondPlatoon.ShowInfo();
-                }
-                else
-                {
-                    Console.WriteLine("Победа за первым взводом!");
-                    _firstPlatoon.ShowInfo();
-                }
+                Fight();
+                AnnounceWinner();
 
                 Console.ReadKey(true);
                 Console.Clear();
             }
 
-            private void StartFight()
+            private void Fight()
             {
-                while (_firstPlatoon.CheckBrokenPlatoon() == false && _secondPlatoon.CheckBrokenPlatoon() == false)
+                while (_firstPlatoon.IsAlive && _secondPlatoon.IsAlive)
                 {
-                    if (_secondPlatoon.CheckBrokenPlatoon() == false)
-                    {
-                        Console.WriteLine("Атака первого взвода:");
-                        _firstPlatoon.Attack(_secondPlatoon);
-                        Console.WriteLine("\nИнофрмация про второй взвод\n");
-                        _secondPlatoon.ShowInfo();
-                        Console.ReadKey(true);
-                        Console.Clear();
-                    }
+                    Console.WriteLine("Атака первого взвода:");
+                    _firstPlatoon.Attack(_secondPlatoon);
+                    Console.WriteLine("\nИнофрмация про второй взвод\n");
+                    _secondPlatoon.ShowInfo();
+                    Console.ReadKey(true);
+                    Console.Clear();
 
-                    if (_firstPlatoon.CheckBrokenPlatoon() == false)
+                    if (_firstPlatoon.IsAlive && _secondPlatoon.IsAlive)
                     {
                         Console.WriteLine("Атака второго взвода:");
                         _secondPlatoon.Attack(_firstPlatoon);
@@ -77,14 +64,33 @@ namespace War
                     }
                 }
             }
+
+            private void AnnounceWinner()
+            {
+                if (_firstPlatoon.IsAlive)
+                {
+                    Console.WriteLine("Победа за первым взводом!");
+                    _firstPlatoon.ShowInfo();
+                }
+                else
+                {
+                    Console.WriteLine("Победа за вторым взводом!");
+                    _secondPlatoon.ShowInfo();
+                }
+            }
         }
 
         class Platoon
         {
+            private static int _ids;
             private List<Soldier> _soldiers = new List<Soldier>();
+
+            public int Id { get => _ids; private set { } }
+            public bool IsAlive => _soldiers.Count > 0;
 
             public Platoon(List<Soldier> soldiers = null)
             {
+                Id = ++_ids;
                 if (soldiers == null)
                 {
                     SetDefaultListSoldiers();
@@ -112,11 +118,6 @@ namespace War
                         }
                     }
                 }
-            }
-
-            public bool CheckBrokenPlatoon()
-            {
-                return _soldiers.Count > 0 ? false : true;
             }
 
             public void ShowInfo()
@@ -231,7 +232,8 @@ namespace War
 
             public override int Attack()
             {
-                int damageMultiplier = Armor / 2;
+                int half = 2;
+                int damageMultiplier = Armor / half;
                 return Damage + damageMultiplier;
             }
         }
