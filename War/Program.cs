@@ -166,9 +166,9 @@ namespace War
 
         abstract class Soldier
         {
+            private static int _ids;
             protected Random Random = new Random();
             protected int Health;
-            private static int _ids;
 
             public int NumberHealth { get { return Health; } }
             public string Name { get; private set; }
