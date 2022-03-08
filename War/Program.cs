@@ -231,7 +231,8 @@ namespace War
 
             public override int Attack()
             {
-                int damageMultiplier = Armor / 2;
+                int half = 2;
+                int damageMultiplier = Armor / half;
                 return Damage + damageMultiplier;
             }
         }
